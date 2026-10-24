@@ -1,0 +1,23 @@
+# Keil build output and local user settings
+firmware/Obj/
+firmware/Listings/
+firmware/*.map
+firmware/*.lst
+firmware/*.log
+firmware/*.uvgui.*
+firmware/*.uvopt
+firmware/**/*.bak*
+
+# Runtime data and local secrets
+cloud/server/test-data*/
+cloud/server/*.env
+!cloud/server/*.env.example
+app/js/config.local.js
+__pycache__/
+*.py[cod]
+
+# Editor and OS files
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

@@ -1,0 +1,13 @@
+WIFI农业 FW5 修复固件
+
+生成时间：2026-10-20 17:03
+工程：LoRa_Slave.uvproj
+编译结果：0 Error(s), 0 Warning(s)
+
+请烧录下面这个文件：
+D:\毕业设计\嵌入式互联网项目\WIFI农业\硬件代码\节点\Obj\WIFI_AGRI_FW5.axf
+
+烧录并重新上电后，OLED 第一行必须显示：
+WIFI AGRI FW5
+
+如果仍显示 WIFI AGRI FW4，说明烧录的仍是旧 AXF，不能据此判断修复结果。

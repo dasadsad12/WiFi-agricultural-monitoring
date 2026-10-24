@@ -1,0 +1,12 @@
+[Unit]
+Description=Clean isolated agriculture telemetry history
+
+[Service]
+Type=oneshot
+User=loraenv
+Group=lora-env-ops
+ExecStart=/usr/bin/python3 /opt/wifi-env-agri/server/cleanup_history.py --data-dir /var/lib/wifi-env-agri
+NoNewPrivileges=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/wifi-env-agri

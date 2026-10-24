@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#123d36">
+  <meta name="format-detection" content="telephone=no">
+  <title>WiFi智慧农业监测</title>
+  <link rel="icon" href="./icon-agri.png">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div id="app" class="app-shell">
+  <header class="topbar">
+    <div class="brand-mark" aria-hidden="true"><i data-lucide="sprout"></i></div>
+    <div class="brand-copy">
+      <strong>WiFi智慧农业监测</strong>
+      <span>水位 · CO₂ · 土壤湿度 · 补光联动</span>
+    </div>
+    <div class="topbar-actions">
+      <button id="refreshTopButton" class="icon-button" type="button" aria-label="刷新数据" title="刷新数据"><i data-lucide="refresh-cw"></i></button>
+      <button id="connectionTopButton" class="icon-button" type="button" aria-label="连接状态" title="连接状态"><i data-lucide="wifi"></i></button>
+    </div>
+    <div class="connection" aria-label="连接状态">
+      <div class="connection-item">
+        <span id="serverStatusDot" class="dot"></span>
+        <span class="connection-label">云服务器</span>
+        <strong id="serverStatusText">未连接</strong>
+      </div>
+      <div class="connection-item">
+        <span id="hardwareStatusDot" class="dot"></span>
+        <span class="connection-label">硬件连接</span>
+        <strong id="hardwareStatusText">等待数据</strong>
+      </div>
+      <span id="serverClock" class="connection-time">--</span>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="panel config" hidden>
+      <div class="panel-head"><div><span class="eyebrow">安全链路</span><h2>连接配置</h2></div><button id="connectButton" class="button primary">连接</button></div>
+      <div class="config-grid">
+        <label>服务器地址<input id="serverUrl" placeholder="http://server.example.com:18127"></label>
+        <label>设备编号<input id="deviceId" value="WIFI_AGRI_001"></label>
+        <label class="fixed-secret">管理令牌<input id="adminToken" type="password" autocomplete="off" readonly></label>
+      </div>
+    </section>
+
+    <div class="view active" data-view="overview">
+      <div class="page-heading">
+        <div><span class="eyebrow">AGRICULTURE OVERVIEW</span><h1>实时总览</h1><p>主页只突出水位与二氧化碳，完整参数进入节点详情查看。</p></div>
+      </div>
+      <section class="summary">
+        <div class="panel-head"><div><span class="eyebrow">运行总览</span><h2>监测节点</h2></div><span id="summaryText" class="muted">等待数据</span></div>
+        <div id="nodeGrid" class="node-grid"></div>
+      </section>
+    </div>
+
+    <div class="view" data-view="regions">
+      <div class="page-heading">
+        <div><span class="eyebrow">AGRICULTURE MAP</span><h1>农业区域</h1><p>节点颜色跟随在线、预警和报警状态变化。</p></div>
+      </div>
+      <section class="panel">
+        <div class="panel-head"><div><span class="eyebrow">农业区域</span><h2>节点状态与完整数据</h2></div><span class="muted">状态随硬件上报更新</span></div>
+        <div id="regionMap" class="region-map"></div>
+      </section>
+    </div>
+
+    <div class="view" data-view="alerts">
+      <div class="page-heading">
+        <div><span class="eyebrow">ALERT CENTER</span><h1>报警中心</h1><p>按节点展示当前异常与历史报警记录。</p></div>
+      </div>
+      <section class="panel">
+        <div class="panel-head"><div><span class="eyebrow">安全事件</span><h2>报警中心</h2></div><button id="allAlarmTest" class="button primary">全在线声光测试</button></div>
+        <div id="alarmCenter" class="alarm-list"></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><div><span class="eyebrow">系统通知</span><h2>手机通知栏提醒</h2></div><button id="notifyButton" class="button">检查通知权限</button></div>
+        <p id="notifyState" class="muted">报警状态首次变化时同步发送手机通知栏消息。</p>
+      </section>
+    </div>
+
+    <div class="view" data-view="reports">
+      <div class="page-heading">
+        <div><span class="eyebrow">DATA REPORT</span><h1>数据报表</h1><p>统计水位、CO₂、土壤湿度、温湿度与光照历史样本。</p></div>
+      </div>
+      <section class="panel report">
+        <div class="panel-head"><div><span class="eyebrow">历史统计</span><h2>数据报表</h2></div><span id="reportRange" class="muted">最近 600 条真实样本</span></div>
+        <div id="reportGrid" class="report-grid"></div>
+        <div class="stats-charts"><canvas id="barChart" height="190"></canvas><canvas id="pieChart" height="190"></canvas></div>
+      </section>
+    </div>
+
+    <div class="view" data-view="settings">
+      <div class="page-heading">
+        <div><span class="eyebrow">SYSTEM SETTINGS</span><h1>控制设置</h1><p>远程测试执行器并维护各项报警阈值。</p></div>
+      </div>
+      <section class="panel">
+        <div class="panel-head"><div><span class="eyebrow">远程执行</span><h2>继电器与报警阈值</h2></div><span class="muted">命令必须收到硬件确认才算成功</span></div>
+        <div id="controlGrid" class="control-grid"></div>
+      </section>
+    </div>
+
+    <section class="panel log-panel" hidden>
+      <div class="panel-head"><div><span class="eyebrow">诊断</span><h2>通讯记录</h2></div><button id="clearLog" class="icon-button">×</button></div>
+      <pre id="eventLog">等待连接</pre>
+    </section>
+  </main>
+  <nav class="bottom-nav" aria-label="主导航">
+    <button class="active" data-nav="overview"><i data-lucide="layout-dashboard"></i><span>总览</span></button>
+    <button data-nav="regions"><i data-lucide="map"></i><span>农业区域</span></button>
+    <button data-nav="alerts" class="nav-alert"><i data-lucide="bell"></i><span>报警中心</span><b id="alarmBadge" class="nav-badge" hidden>0</b></button>
+    <button data-nav="reports"><i data-lucide="bar-chart-3"></i><span>数据报表</span></button>
+    <button data-nav="settings"><i data-lucide="settings-2"></i><span>设置</span></button>
+  </nav>
+  </div>
+  <div id="detailModal" class="modal" hidden>
+    <div class="modal-card">
+      <button id="closeDetail" class="modal-close" aria-label="关闭">×</button>
+      <div id="detailContent"></div>
+    </div>
+  </div>
+  <script src="./vendor/lucide.min.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

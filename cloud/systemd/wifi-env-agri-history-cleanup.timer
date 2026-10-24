@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily cleanup for agriculture telemetry history
+
+[Timer]
+OnCalendar=*-*-* 04:20:00
+Persistent=true
+Unit=wifi-env-agri-history-cleanup.service
+
+[Install]
+WantedBy=timers.target

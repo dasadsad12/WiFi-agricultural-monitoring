@@ -1,0 +1,26 @@
+[Unit]
+Description=Dedicated WiFi agriculture relay
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=loraenv
+Group=lora-env-ops
+WorkingDirectory=/opt/wifi-env-agri
+EnvironmentFile=/etc/wifi-env-agri/wifi-agri.env
+ExecStart=/usr/bin/python3 /opt/wifi-env-agri/server/lora_env_relay.py
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+ReadWritePaths=/var/lib/wifi-env-agri
+
+[Install]
+WantedBy=multi-user.target
